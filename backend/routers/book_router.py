@@ -86,3 +86,25 @@ def delete_book(book_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()  # Add rollback on error
         raise HTTPException(status_code=500, detail=f"Error deleting book: {str(e)}")
+    
+@router.post("/books/bulk", response_model=List[BookResponse], status_code=201)
+def create_multiple_books(books: List[BookModel], db: Session = Depends(get_db)):
+    """
+    Create multiple book records from a list of books.
+    """
+    new_books_db = []
+    for book_data in books:
+        # Convert Pydantic model to SQLAlchemy model instance
+        new_book = Book(**book_data.model_dump())
+        new_books_db.append(new_book)
+    
+    # Add all new books to the session at once
+    db.add_all(new_books_db)
+    # Commit the single transaction
+    db.commit()
+    
+    # Refresh each object to get the database-generated values (like id)
+    for book in new_books_db:
+        db.refresh(book)
+        
+    return new_books_db
