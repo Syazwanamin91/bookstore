@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Database URL (Update as needed)
 DB_USERNAME = "postgres"
-DB_PASSWORD = "Nawzays9738"
+DB_PASSWORD = "password"
 DB_HOST = "localhost"
 DB_PORT = "5432"
 DB_NAME = "books_db"
